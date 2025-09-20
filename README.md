@@ -18,7 +18,7 @@ A Spring Boot API to retrieve the producer with the longest interval between two
 Clone the repository:
 
 ```sh
-git clone https://github.com/ehpenta/outsera.git
+git clone https://github.com/ehs90/outsera.git
 cd outsera
 ```
 ## Build & Run
