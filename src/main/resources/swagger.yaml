@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  title: Golden Raspberry Awards
+  version: v1
+servers:
+  - url: http://localhost:8080
+    description: Local server url
+paths:
+  /movies/{id}:
+    get:
+      tags:
+        - movie-controller
+      operationId: getMovieById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+    put:
+      tags:
+        - movie-controller
+      operationId: updateMovie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+    delete:
+      tags:
+        - movie-controller
+      operationId: deleteMovie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+  /movies:
+    get:
+      tags:
+        - movie-controller
+      operationId: getAllMovies
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+    post:
+      tags:
+        - movie-controller
+      operationId: createMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+  /intervals:
+    get:
+      tags:
+        - interval-controller
+      operationId: getIntervals
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProducerInterval'
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        year:
+          type: integer
+          format: int32
+        title:
+          type: string
+        studios:
+          type: string
+        producers:
+          type: string
+        winner:
+          type: boolean
+    ProducerInterval:
+      type: object
+      properties:
+        producer:
+          type: string
+        interval:
+          type: integer
+          format: int32
+        previousWin:
+          type: integer
+          format: int32
+        followingWin:
+          type: integer
+          format: int32
