@@ -2,6 +2,9 @@ package com.ehs.outsera.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "movies")
 public class Movie {
@@ -15,16 +18,20 @@ public class Movie {
 
     private String title;
     private String studios;
-
-    @Column(length = 2000)
-    private String producers;
-
     private Boolean winner;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "movie_producers",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "producer_id")
+    )
+    private Set<Producer> producers = new HashSet<>();
 
     public Movie() {
     }
 
-    public Movie(Long id, Integer year, String title, String studios, String producers, Boolean winner) {
+    public Movie(Long id, Integer year, String title, String studios, Set<Producer> producers, Boolean winner) {
         this.id = id;
         this.year = year;
         this.title = title;
@@ -65,11 +72,11 @@ public class Movie {
         this.studios = studios;
     }
 
-    public String getProducers() {
+    public Set<Producer> getProducers() {
         return producers;
     }
 
-    public void setProducers(String producers) {
+    public void setProducers(Set<Producer> producers) {
         this.producers = producers;
     }
 

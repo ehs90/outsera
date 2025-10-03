@@ -22,9 +22,11 @@ class MovieLoaderTest {
     MovieLoader movieLoader;
     @Mock
     MovieService movieService;
+    @Mock
+    ProducerService producerService;
 
     @Test
-    void testParseAndSaveValidCsv() {
+    void shouldParseAndSaveCsv() {
         String csv = """
                 year;title;studios;producers;winner
                 2000;Movie1;Studio1;Producer A;yes
