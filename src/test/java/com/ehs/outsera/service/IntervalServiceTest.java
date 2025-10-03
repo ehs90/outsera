@@ -37,7 +37,7 @@ class IntervalServiceTest {
         Movie m4 = new Movie(4L, 2005, "Movie4", "Studio2", Set.of(producerB), true);
         Movie m5 = new Movie(5L, 2010, "Movie5", "Studio2", Set.of(producerB), true);
 
-        when(movieRepository.findByWinnerTrue()).thenReturn(List.of(m1, m2, m3, m4, m5));
+        when(movieRepository.findWinnersWithProducers()).thenReturn(List.of(m1, m2, m3, m4, m5));
 
         Map<String, List<ProducerInterval>> result = service.calculateMinMaxIntervals();
 

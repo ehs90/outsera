@@ -2,6 +2,7 @@ package com.ehs.outsera.repository;
 
 import com.ehs.outsera.model.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findByWinnerTrue();
+    @Query("SELECT DISTINCT m FROM Movie m " +
+            "LEFT JOIN FETCH m.producers p " +
+            "WHERE m.winner = true")
+    List<Movie> findWinnersWithProducers();
 
 }

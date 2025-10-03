@@ -7,6 +7,7 @@ import com.ehs.outsera.repository.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -23,8 +24,9 @@ public class IntervalService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, List<ProducerInterval>> calculateMinMaxIntervals() {
-        List<Movie> winners = repository.findByWinnerTrue();
+        List<Movie> winners = repository.findWinnersWithProducers();
 
         if (winners.isEmpty()) {
             log.warn("No winners found in the database.");

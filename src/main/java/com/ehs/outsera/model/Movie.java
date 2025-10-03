@@ -20,7 +20,7 @@ public class Movie {
     private String studios;
     private Boolean winner;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "movie_producers",
             joinColumns = @JoinColumn(name = "movie_id"),
