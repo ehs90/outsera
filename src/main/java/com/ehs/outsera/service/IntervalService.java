@@ -6,6 +6,7 @@ import com.ehs.outsera.model.ProducerInterval;
 import com.ehs.outsera.repository.MovieRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,9 @@ public class IntervalService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "intervals")
     public Map<String, List<ProducerInterval>> calculateMinMaxIntervals() {
+        long start = System.currentTimeMillis();
         List<Movie> winners = repository.findWinnersWithProducers();
 
         if (winners.isEmpty()) {
@@ -41,7 +44,9 @@ public class IntervalService {
             return Map.of("min", emptyList(), "max", emptyList());
         }
 
-        return getMinMaxIntervals(intervals);
+        Map<String, List<ProducerInterval>> result = getMinMaxIntervals(intervals);
+        log.info("Calculated intervals in {} ms", System.currentTimeMillis() - start);
+        return result;
     }
 
     private static Map<String, TreeSet<Integer>> getProducerWinningYears(List<Movie> winners) {
@@ -62,7 +67,9 @@ public class IntervalService {
             NavigableSet<Integer> years = entry.getValue();
 
             // ignore one-year winners
-            if (years.size() < 2) continue;
+            if (years.size() < 2) {
+                continue;
+            }
 
             Integer previous = null;
             for (Integer current : years) {

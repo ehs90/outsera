@@ -4,15 +4,16 @@ import com.ehs.outsera.model.Movie;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +26,9 @@ class MovieLoaderTest {
     @Mock
     ProducerService producerService;
 
+    @Captor
+    ArgumentCaptor<List<Movie>> captor;
+
     @Test
     void shouldParseAndSaveCsv() {
         String csv = """
@@ -36,16 +40,14 @@ class MovieLoaderTest {
 
         movieLoader.parseAndSave(in);
 
-        ArgumentCaptor<Movie> captor = ArgumentCaptor.forClass(Movie.class);
+        verify(movieService).saveAllMovies(captor.capture());
 
-        verify(movieService, times(2)).createMovie(captor.capture());
-
-        assertThat(captor.getAllValues()).hasSize(2);
-        assertThat(captor.getAllValues().get(0).getTitle()).isEqualTo("Movie1");
-        assertThat(captor.getAllValues().get(0).getWinner()).isTrue();
-        assertThat(captor.getAllValues().get(1).getTitle()).isEqualTo("Movie2");
-        assertThat(captor.getAllValues().get(1).getWinner()).isFalse();
+        List<Movie> values = captor.getValue();
+        assertThat(values).hasSize(2);
+        assertThat(values.get(0).getTitle()).isEqualTo("Movie1");
+        assertThat(values.get(0).getWinner()).isTrue();
+        assertThat(values.get(1).getTitle()).isEqualTo("Movie2");
+        assertThat(values.get(1).getWinner()).isFalse();
     }
 
 }
-

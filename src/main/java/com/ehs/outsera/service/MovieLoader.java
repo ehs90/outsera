@@ -12,8 +12,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class MovieLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        long start = System.currentTimeMillis();
         try {
             var res = new ClassPathResource("Movielist.csv");
             if (res.exists()) {
@@ -39,21 +42,25 @@ public class MovieLoader implements CommandLineRunner {
                     parseAndSave(in);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("File Movielist.csv could not be loaded.", e);
         } finally {
-            log.info("Movie parse and save process finished.");
+            log.info("Movie parse and save process finished, took: {} ms", System.currentTimeMillis() - start);
         }
     }
 
     protected void parseAndSave(InputStream in) {
         List<Record> records = parse(in);
+        List<Movie> movies = new ArrayList<>();
 
         for (Record record : records) {
             Movie movie = convert(record);
-            if (movie == null) continue;
-            movieService.createMovie(movie);
+            if (movie != null) {
+                movies.add(movie);
+            }
         }
+
+        movieService.saveAllMovies(movies);
     }
 
     private static List<Record> parse(InputStream in) {
@@ -70,8 +77,8 @@ public class MovieLoader implements CommandLineRunner {
         Movie movie = new Movie();
 
         try {
-            movie.setYear(Integer.parseInt(record.getString("year")));
-        } catch (Exception e) {
+            movie.setYear(Integer.valueOf(record.getString("year")));
+        } catch (NumberFormatException e) {
             log.warn("Could not parse movie year for record: {}", record, e);
             return null;
         }

@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "movies")
+@Table(name = "movies", indexes = {
+        @Index(name = "idx_movie_winner", columnList = "winner"),
+        @Index(name = "idx_movie_year", columnList = "movie_year")
+})
 public class Movie {
 
     @Id
@@ -87,4 +90,12 @@ public class Movie {
     public void setWinner(Boolean winner) {
         this.winner = winner;
     }
+
+    @Override
+    public String toString() {
+        return """
+                Movie{id=%s, year=%s, title='%s', studios='%s', producers=%s, winner=%s}
+                """.formatted(id, year, title, studios, producers, winner);
+    }
+
 }
