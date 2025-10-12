@@ -71,12 +71,12 @@ public class IntervalService {
                 continue;
             }
 
-            Integer previous = null;
-            for (Integer current : years) {
-                if (previous != null) {
-                    int interval = current - previous;
-                    intervals.add(new ProducerInterval(entry.getKey(), interval, previous, current));
-                }
+            Iterator<Integer> iterator = years.iterator();
+            Integer previous = iterator.next();
+            while (iterator.hasNext()) {
+                Integer current = iterator.next();
+                int interval = current - previous;
+                intervals.add(new ProducerInterval(entry.getKey(), interval, previous, current));
                 previous = current;
             }
         }
